@@ -1,0 +1,2 @@
+class pra:
+    pass
