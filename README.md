@@ -30,7 +30,7 @@ Manager menu
 5. Logout
     
 ----------------------------
-Create Task                 |
+Create Task                 
      ↓                      
 Assign Task to Employee 
      ↓
