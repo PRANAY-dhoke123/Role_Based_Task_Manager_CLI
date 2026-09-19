@@ -1,13 +1,9 @@
 import json 
+from classes.company import Company
 
-class Admin:    
 
-    emp_list = []
-    # Load employee data when program starts
-    def load_emp(self):
-
-        with open("data/employee.json", "r") as file:
-            Admin.emp_list = json.load(file)
+class Admin(Company):     
+    
 
     # For adding the employee data in the list and the save to file
     def add_employee_details(self):
@@ -19,16 +15,14 @@ class Admin:
         self.emp_role = input("Enter the role of Employee: ")
 
         E = [self.emp_id , self.emp_name ,self.emp_email , self.emp_mo_no , self.emp_depart , self.emp_role]
-        Admin.emp_list.append(E)
+        Company.emp_list.append(E)
         
 
-    def save_emp(self):
-        with open ("data/employee.json", "w") as file:  
-            json.dump(Admin.emp_list, file,indent = 4)
+    
 
     #For the Loading all  employee data 
     def load_all_emp(self):
-        for E in Admin.emp_list:
+        for E in Company.emp_list:
             print(E)
 
 
@@ -37,9 +31,9 @@ class Admin:
         self.del_emp_id  = del_emp_id  
 
         found = False
-        for E in Admin.emp_list:
+        for E in Company.emp_list:
             if E[0] == self.del_emp_id:
-                Admin.emp_list.remove(E)
+                Company.emp_list.remove(E)
                 self.save_emp()               
                 found = True
                 print(f"\n###### Sucessfully Deleted Employee {E[0]} details  ########## \n")
@@ -54,7 +48,7 @@ class Admin:
         self.emp_id = emp_id   
                 
         found = False
-        for E in Admin.emp_list:
+        for E in Company.emp_list:
             if self.emp_id == E[0] :
                 print("\nEmployee Details:")
                 print(f"Employee ID        : {E[0]}")
@@ -75,7 +69,7 @@ class Admin:
 
 # Main Admin Code 
 A1 = Admin()
-A1.load_emp()
+
 
 def menu_admin():
     while True :
