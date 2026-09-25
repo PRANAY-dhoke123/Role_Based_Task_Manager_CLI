@@ -1,5 +1,6 @@
-import json 
-from classes.company import Company
+
+from classes.user import Company
+from utils.input_helper import safe_int
 
 
 class Admin(Company):     
@@ -7,10 +8,16 @@ class Admin(Company):
 
     # For adding the employee data in the list and the save to file
     def add_employee_details(self):
-        self.emp_id = int(input("Enter the Employee ID: "))
+        self.emp_id = safe_int("Enter the Employee ID: ")
+
+        for E in Company.emp_list:
+            if E[0] == self.emp_id :
+                print(f"{self.emp_id} This ID already available ")
+                return 
+
         self.emp_name = input("Enter the Employee Name : ")
         self.emp_email = input("Enter the Email ID of Employee : ")
-        self.emp_mo_no = int(input("Enter Employee Mobile Number : "))
+        self.emp_mo_no = safe_int("Enter Employee Mobile Number : ")
         self.emp_depart = input("Enter the Department of Employee: ")
         self.emp_role = input("Enter the role of Employee: ")
 
@@ -70,44 +77,3 @@ class Admin(Company):
 # Main Admin Code 
 A1 = Admin()
 
-
-def menu_admin():
-    while True :
-        print("\t1. Add Employee ")
-        print("\t2. Delete Employee ")
-        print("\t3. View Employee Details")
-        print("\t4. View All Employee")
-        print("\t5. Exit ")
-
-        admin_choice = int(input("Enter your choice : "))
-        if admin_choice == 1 :
-            print("Enter the Details of Employee ")
-            A1.add_employee_details()
-            A1.save_emp()
-            print("\n####  Sucessfully Added Employee  ########### \n")
-
-
-        elif admin_choice == 2 :
-            print("Deleting the Details of Employee ")
-            del_emp_id  = int(input("Enter the Employee ID for Delete : "))
-            A1.delete_employee_details(del_emp_id)
-
-
-        elif admin_choice == 3 :
-            print("View Employee Details  ")
-            emp_id = int(input("Enter the ID of the Employee For Details : "))
-            A1.find_emp(emp_id)
-
-
-        elif admin_choice == 4 :
-            print(" All Employee Details : ")
-            A1.load_all_emp()
-            print("\n#######  Sucessfully Display All Employees Deatils  ###########\n")
-
-
-        elif admin_choice == 5 :
-            print("\nThank You Admin\n") 
-
-            break 
-        else:
-            print("\nEnter a valid Input Admin \n")

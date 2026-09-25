@@ -1,5 +1,5 @@
-from classes import admin , manager , employee 
-
+from cli import admin_menu , employee_menu , manager_menu
+from utils.input_helper import safe_int
 
 class Application:
 
@@ -13,17 +13,18 @@ class Application:
             print("\t3. Employee ")
             print("\t4. Exit ")
 
-            user_choice = int(input("Enter your choice "))
+            user_choice = safe_int("Enter your choice ")
+
             if user_choice == 1:
                 print("\nWelcome Admin")
-                admin.menu_admin()
+                admin_menu.menu_admin()
                 
             elif user_choice == 2:
                 print("Welcome Manager")
-                manager.menu_manager()
+                manager_menu.menu_manager()
             elif user_choice == 3:
                 print("Welcome Employee")
-                employee.menu_employee()
+                employee_menu.menu_employee()
 
             elif user_choice == 4 :
                 print("Thank You")
