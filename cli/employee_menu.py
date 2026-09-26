@@ -1,8 +1,8 @@
-from classes.employee import E1
+
 from utils.input_helper import safe_int
 
 
-def menu_employee():
+def menu_employee(E1):
     while True :
         print("\t1. View Profile ")
         print("\t2. View My Tasks ")
@@ -32,13 +32,16 @@ def menu_employee():
         elif employee_choice == 3 :
            print("Search Task : ")
            task_id = safe_int("Enter the ID of the task : ")
-           E1.search_task(task_id)
+           emp_id = safe_int("Enter the ID of the Employee : ")           
+           E1.search_task(task_id,emp_id)
 
 
         elif employee_choice == 4 :
             print("View Task Details") 
             task_id = safe_int("Enter the Task ID for Details : ")
-            E1.task_details(task_id)
+            emp_id = safe_int("Enter the ID of the Employee : ")           
+
+            E1.task_details(task_id,emp_id)
 
 
 

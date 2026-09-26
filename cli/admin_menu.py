@@ -1,8 +1,8 @@
-from classes.admin import A1 
+
 from utils.input_helper import safe_int
 
 
-def menu_admin():
+def menu_admin(A1):
     while True :
         print("\t1. Add Employee ")
         print("\t2. Delete Employee ")

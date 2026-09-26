@@ -1,8 +1,8 @@
-from classes.manager import M1
+
 from utils.input_helper import safe_int
 
 
-def menu_manager():
+def menu_manager(M1):
     while True:
         print("""
                 1. Create Task
@@ -21,7 +21,7 @@ def menu_manager():
         if man_choice == 1 :
             print("Creating a Task  : ")
             M1.create_task()
-            M1.save_task()
+            
             print("\n#### Sucessfully  Created a Task #########\n")
 
         elif man_choice == 2 :

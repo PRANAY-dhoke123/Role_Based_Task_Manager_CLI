@@ -1,7 +1,22 @@
+
 from cli import admin_menu , employee_menu , manager_menu
 from utils.input_helper import safe_int
+from classes.user import Company
+from classes.admin import Admin
+from classes.employee import Employee 
+from classes.manager import Manager 
 
 class Application:
+
+
+
+    def __init__(self):
+        self.C1 = Company()
+        self.C1.load_emp()
+        self.C1.load_task()
+        self.A1 = Admin()
+        self.M1 = Manager()
+        self.E1 = Employee()
 
     def start(self):
 
@@ -17,14 +32,14 @@ class Application:
 
             if user_choice == 1:
                 print("\nWelcome Admin")
-                admin_menu.menu_admin()
+                admin_menu.menu_admin(self.A1)
                 
             elif user_choice == 2:
                 print("Welcome Manager")
-                manager_menu.menu_manager()
+                manager_menu.menu_manager(self.M1)
             elif user_choice == 3:
                 print("Welcome Employee")
-                employee_menu.menu_employee()
+                employee_menu.menu_employee(self.E1)
 
             elif user_choice == 4 :
                 print("Thank You")
@@ -32,6 +47,4 @@ class Application:
             else:
                 print("Please Enter a Valid Input")
 
-
-
-                
+        

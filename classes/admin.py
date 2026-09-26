@@ -1,6 +1,7 @@
 
 from classes.user import Company
 from utils.input_helper import safe_int
+from models.employee import EmployeeRecord
 
 
 class Admin(Company):     
@@ -8,20 +9,20 @@ class Admin(Company):
 
     # For adding the employee data in the list and the save to file
     def add_employee_details(self):
-        self.emp_id = safe_int("Enter the Employee ID: ")
+        emp_id = safe_int("Enter the Employee ID: ")
 
         for E in Company.emp_list:
-            if E[0] == self.emp_id :
-                print(f"{self.emp_id} This ID already available ")
+            if E.emp_id  == emp_id :
+                print(f"{emp_id} This ID already available ")
                 return 
 
-        self.emp_name = input("Enter the Employee Name : ")
-        self.emp_email = input("Enter the Email ID of Employee : ")
-        self.emp_mo_no = safe_int("Enter Employee Mobile Number : ")
-        self.emp_depart = input("Enter the Department of Employee: ")
-        self.emp_role = input("Enter the role of Employee: ")
+        emp_name = input("Enter the Employee Name : ")
+        emp_email = input("Enter the Email ID of Employee : ")
+        emp_mo_no = safe_int("Enter Employee Mobile Number : ")
+        emp_depart = input("Enter the Department of Employee: ")
+        emp_role = input("Enter the role of Employee: ")
 
-        E = [self.emp_id , self.emp_name ,self.emp_email , self.emp_mo_no , self.emp_depart , self.emp_role]
+        E = EmployeeRecord(emp_id,emp_name,emp_email,emp_mo_no,emp_depart,emp_role)
         Company.emp_list.append(E)
         
 
@@ -30,24 +31,22 @@ class Admin(Company):
     #For the Loading all  employee data 
     def load_all_emp(self):
         for E in Company.emp_list:
-            print(E)
+             print(f"ID: {E.emp_id} | Name: {E.name} | Email: {E.email} | "
+                  f"Mobile: {E.mobile} | Dept: {E.department} | Role: {E.role}")
 
 
     #For deleting the data from the list 
     def delete_employee_details(self,del_emp_id):
         self.del_emp_id  = del_emp_id  
-
-        found = False
+        
         for E in Company.emp_list:
-            if E[0] == self.del_emp_id:
+            if E.emp_id == self.del_emp_id:
                 Company.emp_list.remove(E)
-                self.save_emp()               
-                found = True
-                print(f"\n###### Sucessfully Deleted Employee {E[0]} details  ########## \n")
- 
-                break
-        if found == False:
-            print("Not a Valid Emoloyee ID")
+                self.save_emp()                
+                print(f"\n###### Sucessfully Deleted Employee {E.emp_id} details  ########## \n")
+                return 
+                
+        print("Not a Valid Emoloyee ID")
 
 
     # For finding the details of the employee
@@ -56,14 +55,14 @@ class Admin(Company):
                 
         found = False
         for E in Company.emp_list:
-            if self.emp_id == E[0] :
+            if self.emp_id == E.emp_id :
                 print("\nEmployee Details:")
-                print(f"Employee ID        : {E[0]}")
-                print(f"Employee Name      : {E[1]}")
-                print(f"Employee Email     : {E[2]}")
-                print(f"Employee Mobile No : {E[3]}")
-                print(f"Department         : {E[4]}")
-                print(f"Role               : {E[5]}")
+                print(f"Employee ID        : {E.emp_id}")
+                print(f"Employee Name      : {E.name}")
+                print(f"Employee Email     : {E.email}")
+                print(f"Employee Mobile No : {E.mobile}")
+                print(f"Department         : {E.department}")
+                print(f"Role               : {E.role}")
                 found = True
                 print(f"\n###### Sucessfully Dsiplay Details of Employee By ID : {self.emp_id} ##########\n ")
                 break
@@ -72,8 +71,4 @@ class Admin(Company):
             print("Please enter a Valid Employee ID : ")
             
         
-
-
-# Main Admin Code 
-A1 = Admin()
 

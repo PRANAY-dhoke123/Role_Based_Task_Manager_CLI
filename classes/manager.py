@@ -1,6 +1,7 @@
-
+from models.task import Task
 from classes.user import Company
 from utils.input_helper import safe_int
+ 
 
 class Manager(Company):
     
@@ -11,7 +12,7 @@ class Manager(Company):
         self.task_id = safe_int("Enter the Task ID : ")
 
         for T in Company.task_list:
-            if T['Task ID'] == self.task_id:
+            if T.task_id == self.task_id:
                 print(f"{self.task_id } - Task ID already Exits")
                 return
 
@@ -23,16 +24,10 @@ class Manager(Company):
         self.deadline = input("Enter the Date of Deadline : ")
         self.status = input("Enter the status of Task : ")
 
-        task_dict = {
-                    "Task ID" : self.task_id ,
-                    "Task Title" : self.task_title ,
-                    "Task Description" : self.descp , 
-                    "Task Assigning To" : self.assign ,
-                    "Task Priority" : self.priority,
-                    "Task Deadline" : self.deadline,
-                    "Task Status" : self.status
-                }
-        Company.task_list.append(task_dict)
+        new_task = Task(self.task_id, self.task_title, self.descp, self.priority, self.deadline, status=self.status)
+        Company.task_list.append(new_task)
+        self.save_task()
+        
 
     
     
@@ -42,7 +37,7 @@ class Manager(Company):
         print("List of Tasks ")
         print("\n===== ALL TASK LIST  =====")
         for E in Company.task_list:
-            for key, value in E.items():
+            for key, value in E.to_dict().items():
                 print(f"\t{key}: {value}")
             print("============================")
                 
@@ -50,27 +45,27 @@ class Manager(Company):
     def get_emp_data(self):
         print("\n===== EMPLOYEE LIST =====")
         for E in Company.emp_list:
-            print(f"Employee ID: {E[0]}")
-            print(f"Employee Name: {E[1]}")
-            print(f"Employee Designation: {E[4]}")
-            print(f"Employee Status: {E[5]}")
+            print(f"Employee ID: {E.emp_id}")
+            print(f"Employee Name: {E.name}")
+            print(f"Employee Designation: {E.department}")
+            print(f"Employee Role: {E.role}")
         print("============================")
 
     # For assisining the task 
     def assigning_task(self,assign,task_id):
-        if not any(e[0] == assign for e in Company.emp_list):
+        if not any(E.emp_id == assign for E in Company.emp_list):
             print("Employee does not exist")
             return
         found = False
         for E in Company.task_list:
-            if E["Task ID"] == task_id:
-                E["Task Assigning To"] = assign
+            if E.task_id == task_id:
+                E.assign_to_employee(assign)
                 
                 self.save_task()
                 print("\n===== TASK ASSIGNED SUCCESSFULLY =====")       
-                print(f"Task ID       : {E['Task ID']}")
-                print(f"Task Title    : {E['Task Title']}")
-                print(f"Assigned To   : {E['Task Assigning To']}")
+                print(f"Task ID       : {E.task_id}")
+                print(f"Task Title    : {E.title}")
+                print(f"Assigned To   : {E.assign_to}")
                 print("======================================")
                 found = True
                 break 
@@ -83,10 +78,10 @@ class Manager(Company):
         found = False
         for E in Company.task_list:
             if E['Task Assigning To'] is not None:
-                print(f"Task ID       : {E['Task ID']}")
-                print(f"Task Title    : {E['Task Title']}")
-                print(f"Description   : {E['Task Description']}")
-                print(f"Assigned To   : {E['Task Assigning To']}")
+                print(f"Task ID       : {E.task_id}")
+                print(f"Task Title    : {E.title}")
+                print(f"Description   : {E.description}")
+                print(f"Assigned To   : {E.assign_to}")
                 found = True
         if found == False:
             print("No Task Assigned")
@@ -95,22 +90,29 @@ class Manager(Company):
 
     # for updating the task details :
     def update_task(self,update_id):
+        field_map = {
+            "Task Title": "title",
+            "Task Description": "description",
+            "Task Priority": "priority",
+            "Task Deadline": "deadline",
+        }
+
         found = False
         changed = False
         for E in Company.task_list:
-            if update_id == E['Task ID']:
+            if update_id == E.task_id:
                 found = True
-                change = input("Enter What to change : ")
-                if change in  E and change != "Task ID":
-                    data = safe_int("Enter the Value of update ")
-                    E[change] = data
+                change = input("Enter What to change (Task Title / Task Description / Task Priority / Task Deadline): ")
+                if change in field_map:
+                    data = input("Enter the Value of update ")
+                    setattr(E, field_map[change], data)
                     self.save_task()
                     print("\n===== UPDATE TASK =====")
-                    print(f"Task Title       :{E['Task Title']}")
-                    print(f"Task Description :{E['Task Description']}")
-                    changed = True 
+                    print(f"Task Title       :{E.title}")
+                    print(f"Task Description :{E.description}")
+                    changed = True
                     break
-        
+
         if found == False:
             print("Invalid Task ID : ")
         if changed == False:
@@ -126,9 +128,9 @@ class Manager(Company):
     def task_status(self):
         print("\n===== TASK STATUS =====")
         for E in Company.task_list:
-            print(f"Task ID     : {E['Task ID']}")
-            print(f"Task Title  : {E['Task Title']}")
-            print(f"Task Status : {E['Task Status']}")
+            print(f"Task ID     : {E.task_id}")
+            print(f"Task Title  : {E.title}")
+            print(f"Task Status : {E.status}")
         print("============================")
 
     
@@ -137,17 +139,28 @@ class Manager(Company):
         
         found = False
         for E in Company.task_list:
-            if E['Task ID'] == task_id :
-                data_status = input("What is new status  :  ")
-                E['Task Status'] = data_status
+            if  E.task_id == task_id :
+                print("\n1. Pending")
+                print("2. In Progress")
+                print("3. Completed")
+
+                choice_status = safe_int("Enter your choice of status  :  ")
+                status_map = {   1: "Pending", 2: "In Progress", 3: "Completed"  }
+
+                if choice_status not in status_map:
+                    print("Invalid status.")
+                    return
+                
+                E.update_status(status_map[choice_status])
                 self.save_task()
-                found = True
                 print("\n===== STATUS CHANGED SUCCESSFULLY =====")
-                print(f"Task ID     : {E['Task ID']}")
-                print(f"Task Title  : {E['Task Title']}")
-                print(f"New Status  : {E['Task Status']}")
-                print("=======================================")
+                print(f"Task ID     : {E.task_id}")
+                print(f"Task Title  : {E.title}")
+                print(f"New Status  : {E.status}")
+                print("=======================================")  
+                found = True
                 break
+                
         if found == False :
             print("Not changed Status : ")
 
@@ -155,10 +168,10 @@ class Manager(Company):
     def delete_task(self,del_id):
         found = False 
         for E in Company.task_list:
-            if E['Task ID'] == del_id :
+            if  E.task_id == del_id :
                 print("\n===== TASK DELETED =====")
-                print(f"Task ID    : {E['Task ID']}")
-                print(f"Task Title : {E['Task Title']}")
+                print(f"Task ID    : {E.task_id}")
+                print(f"Task Title : {E.title}")
                 Company.task_list.remove(E)
                 self.save_task()
                 found = True
@@ -174,13 +187,13 @@ class Manager(Company):
         for E in Company.task_list:
             if search_id == E['Task ID']:
                 print("\n===== TASK DETAILS =====")
-                print(f"\tTask ID: {E['Task ID']}")
-                print(f"\tTask Title: {E['Task Title']}")
-                print(f"\tTask Description: {E['Task Description']}")
-                print(f"\tTask Assigning To: {E['Task Assigning To']}")
-                print(f"\tTask Priority: {E['Task Priority']}")
-                print(f"\tTask Deadline: {E['Task Deadline']}")
-                print(f"\tTask Status: {E['Task Status']}")
+                print(f"\tTask ID: {E.task_id}")
+                print(f"\tTask Title: {E.title}")
+                print(f"\tTask Description: {E.description}")
+                print(f"\tTask Assigning To: {E.assign_to}")
+                print(f"\tTask Priority: {E.priority}")
+                print(f"\tTask Deadline: {E.deadline}")
+                print(f"\tTask Status: {E.status}")
                 print("============================")
                 found = True
                 break
@@ -189,5 +202,3 @@ class Manager(Company):
             print("Invalid Task ID : ")
 
 
-# Main Code 
-M1 = Manager()
